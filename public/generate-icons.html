@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PWA 图标生成器</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .container {
+      background: white;
+      border-radius: 20px;
+      padding: 40px;
+      max-width: 600px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    }
+
+    h1 {
+      color: #333;
+      margin-bottom: 10px;
+      font-size: 28px;
+    }
+
+    .subtitle {
+      color: #666;
+      margin-bottom: 30px;
+      font-size: 14px;
+    }
+
+    .preview-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+      gap: 15px;
+      margin: 30px 0;
+    }
+
+    .preview-item {
+      text-align: center;
+    }
+
+    .preview-item canvas {
+      width: 100%;
+      height: auto;
+      border-radius: 20%;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      transition: transform 0.2s;
+    }
+
+    .preview-item canvas:hover {
+      transform: scale(1.05);
+    }
+
+    .preview-item span {
+      display: block;
+      margin-top: 8px;
+      font-size: 12px;
+      color: #666;
+    }
+
+    .button {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      padding: 15px 30px;
+      border-radius: 10px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      width: 100%;
+      margin: 10px 0;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+    }
+
+    .button:active {
+      transform: translateY(0);
+    }
+
+    .status {
+      margin-top: 20px;
+      padding: 15px;
+      border-radius: 10px;
+      background: #f0f0f0;
+      font-size: 14px;
+      color: #333;
+      text-align: center;
+    }
+
+    .status.success {
+      background: #d4edda;
+      color: #155724;
+    }
+
+    .status.error {
+      background: #f8d7da;
+      color: #721c24;
+    }
+
+    .instructions {
+      background: #f8f9fa;
+      padding: 20px;
+      border-radius: 10px;
+      margin-top: 20px;
+      font-size: 14px;
+      line-height: 1.6;
+      color: #555;
+    }
+
+    .instructions ol {
+      margin-left: 20px;
+      margin-top: 10px;
+    }
+
+    .instructions li {
+      margin: 8px 0;
+    }
+
+    code {
+      background: #e9ecef;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-family: 'Courier New', monospace;
+      font-size: 13px;
+    }
+
+    .upload-area {
+      border: 2px dashed #667eea;
+      border-radius: 10px;
+      padding: 30px;
+      text-align: center;
+      margin-bottom: 20px;
+      background: #f8f9ff;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .upload-area:hover {
+      border-color: #764ba2;
+      background: #f0f2ff;
+    }
+
+    .upload-area.drag-over {
+      border-color: #38ef7d;
+      background: #e8fff3;
+    }
+
+    .upload-area input {
+      display: none;
+    }
+
+    .upload-icon {
+      font-size: 48px;
+      margin-bottom: 10px;
+    }
+
+    .upload-text {
+      color: #667eea;
+      font-weight: 600;
+      margin-bottom: 5px;
+    }
+
+    .upload-hint {
+      color: #999;
+      font-size: 12px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🎮 PWA 图标生成器</h1>
+    <p class="subtitle">上传 SVG 文件，生成所有尺寸的 PWA 图标</p>
+
+    <div class="upload-area" id="uploadArea" onclick="document.getElementById('svgInput').click()">
+      <input type="file" id="svgInput" accept=".svg,image/svg+xml" onchange="handleFileUpload(event)">
+      <div class="upload-icon">📤</div>
+      <div class="upload-text">点击或拖拽上传 SVG 文件</div>
+      <div class="upload-hint">支持 .svg 格式，建议使用 512×512 或更大尺寸</div>
+    </div>
+
+    <div class="preview-grid" id="previewGrid"></div>
+
+    <button class="button" onclick="generateAndDownloadAll()" id="downloadBtn" style="display: none;">
+      📦 打包下载所有图标 (ZIP)
+    </button>
+
+    <div class="status" id="status" style="display: none;"></div>
+
+    <div class="instructions">
+      <strong>📖 使用说明：</strong>
+      <ol>
+        <li>上传您的 SVG 图标文件（建议 512×512 或更大）</li>
+        <li>预览自动生成的各种尺寸图标</li>
+        <li>点击"打包下载所有图标 (ZIP)"下载压缩包</li>
+        <li>解压 <code>pwa-icons.zip</code> 文件</li>
+        <li>将解压后的所有 PNG 文件放到 <code>public/icons/</code> 目录</li>
+        <li>运行 <code>npm run build && npm run preview</code> 测试</li>
+        <li>在 Safari 中打开，点击分享按钮，选择"添加到主屏幕"</li>
+      </ol>
+    </div>
+  </div>
+
+  <script>
+    const sizes = [72, 96, 128, 144, 152, 192, 384, 512];
+    let canvases = {};
+    let uploadedSvg = null;
+
+    // 处理拖放
+    const uploadArea = document.getElementById('uploadArea');
+
+    uploadArea.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      uploadArea.classList.add('drag-over');
+    });
+
+    uploadArea.addEventListener('dragleave', () => {
+      uploadArea.classList.remove('drag-over');
+    });
+
+    uploadArea.addEventListener('drop', (e) => {
+      e.preventDefault();
+      uploadArea.classList.remove('drag-over');
+
+      const files = e.dataTransfer.files;
+      if (files.length > 0 && files[0].type === 'image/svg+xml') {
+        handleFile(files[0]);
+      } else {
+        showStatus('❌ 请上传 SVG 格式的文件', 'error');
+      }
+    });
+
+    function handleFileUpload(event) {
+      const file = event.target.files[0];
+      if (file) {
+        handleFile(file);
+      }
+    }
+
+    function handleFile(file) {
+      if (!file.type.includes('svg')) {
+        showStatus('❌ 请上传 SVG 格式的文件', 'error');
+        return;
+      }
+
+      showStatus('⏳ 正在加载 SVG 文件...');
+
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const svgData = e.target.result;
+        loadSvgAndGenerateIcons(svgData);
+      };
+      reader.readAsText(file);
+    }
+
+    function loadSvgAndGenerateIcons(svgData) {
+      // 创建图片对象
+      const img = new Image();
+      const blob = new Blob([svgData], { type: 'image/svg+xml' });
+      const url = URL.createObjectURL(blob);
+
+      img.onload = () => {
+        uploadedSvg = img;
+        URL.revokeObjectURL(url);
+        previewIcons();
+        document.getElementById('downloadBtn').style.display = 'block';
+      };
+
+      img.onerror = () => {
+        URL.revokeObjectURL(url);
+        showStatus('❌ SVG 文件加载失败，请检查文件格式', 'error');
+      };
+
+      img.src = url;
+    }
+
+    function createIconFromSvg(size) {
+      if (!uploadedSvg) {
+        showStatus('❌ 请先上传 SVG 文件', 'error');
+        return null;
+      }
+
+      const canvas = document.createElement('canvas');
+      canvas.width = size;
+      canvas.height = size;
+      const ctx = canvas.getContext('2d');
+
+      // 绘制白色背景
+      ctx.fillStyle = '#FFFFFF';
+      ctx.fillRect(0, 0, size, size);
+
+      // 计算缩放比例，保持宽高比
+      const scale = Math.min(size / uploadedSvg.width, size / uploadedSvg.height);
+      const x = (size - uploadedSvg.width * scale) / 2;
+      const y = (size - uploadedSvg.height * scale) / 2;
+
+      // 绘制 SVG
+      ctx.drawImage(uploadedSvg, x, y, uploadedSvg.width * scale, uploadedSvg.height * scale);
+
+      return canvas;
+    }
+
+    function previewIcons() {
+      if (!uploadedSvg) {
+        showStatus('❌ 请先上传 SVG 文件', 'error');
+        return;
+      }
+
+      const grid = document.getElementById('previewGrid');
+      grid.innerHTML = '';
+      canvases = {};
+
+      sizes.forEach(size => {
+        const canvas = createIconFromSvg(size);
+        if (!canvas) return;
+
+        canvases[size] = canvas;
+
+        const item = document.createElement('div');
+        item.className = 'preview-item';
+        item.innerHTML = `<span>${size}×${size}</span>`;
+        item.insertBefore(canvas, item.firstChild);
+
+        grid.appendChild(item);
+      });
+
+      showStatus('✅ 预览已生成！点击下方按钮下载所有图标。', 'success');
+    }
+
+    function canvasToBlob(canvas) {
+      return new Promise((resolve) => {
+        canvas.toBlob((blob) => {
+          resolve(blob);
+        });
+      });
+    }
+
+    async function generateAndDownloadAll() {
+      if (!uploadedSvg) {
+        showStatus('❌ 请先上传 SVG 文件', 'error');
+        return;
+      }
+
+      try {
+        showStatus('⏳ 正在生成图标...请稍候');
+
+        // 创建 ZIP 对象
+        const zip = new JSZip();
+
+        // 如果还没预览，先生成 canvas
+        if (Object.keys(canvases).length === 0) {
+          sizes.forEach(size => {
+            const canvas = createIconFromSvg(size);
+            if (canvas) {
+              canvases[size] = canvas;
+            }
+          });
+        }
+
+        // 将所有图标添加到 ZIP
+        for (let i = 0; i < sizes.length; i++) {
+          const size = sizes[i];
+          if (canvases[size]) {
+            showStatus(`📦 正在打包 ${i + 1}/${sizes.length + 1}: icon-${size}x${size}.png`);
+            const blob = await canvasToBlob(canvases[size]);
+            zip.file(`icon-${size}x${size}.png`, blob);
+          }
+        }
+
+        // 添加 apple-touch-icon
+        showStatus(`📦 正在打包 ${sizes.length + 1}/${sizes.length + 1}: apple-touch-icon.png`);
+        const appleIcon = createIconFromSvg(180);
+        if (appleIcon) {
+          const appleBlob = await canvasToBlob(appleIcon);
+          zip.file('apple-touch-icon.png', appleBlob);
+        }
+
+        // 生成 ZIP 文件
+        showStatus('⏳ 正在压缩文件...');
+        const zipBlob = await zip.generateAsync({
+          type: 'blob',
+          compression: 'DEFLATE',
+          compressionOptions: { level: 9 }
+        });
+
+        // 下载 ZIP 文件
+        const url = URL.createObjectURL(zipBlob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'pwa-icons.zip';
+        a.click();
+        URL.revokeObjectURL(url);
+
+        showStatus('✅ 图标已打包下载完成！请解压后将文件放到 public/icons/ 目录', 'success');
+      } catch (error) {
+        showStatus('❌ 打包失败：' + error.message, 'error');
+        console.error('打包错误：', error);
+      }
+    }
+
+    function showStatus(message, type = '') {
+      const status = document.getElementById('status');
+      status.textContent = message;
+      status.className = 'status ' + type;
+      status.style.display = 'block';
+    }
+  </script>
+</body>
+</html>

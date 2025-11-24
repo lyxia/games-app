@@ -4,6 +4,26 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <title>小学生专项练习游戏中心</title>
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" sizes="32x32" href="./icons/ios/32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="./icons/ios/16.png" />
+
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="./manifest.json" />
+
+    <!-- iOS 支持 -->
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="游戏中心" />
+    <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="./icons/ios/180.png" />
+    <link rel="apple-touch-icon" sizes="152x152" href="./icons/ios/152.png" />
+    <link rel="apple-touch-icon" sizes="167x167" href="./icons/ios/167.png" />
+
+    <!-- 主题色 -->
+    <meta name="theme-color" content="#8B5CF6" />
+
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- 字体链接 -->
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&family=Zcool+KuaiLe&display=swap" rel="stylesheet">
@@ -141,6 +161,53 @@
   <body class="bg-gradient-to-b from-blue-100 to-purple-200 min-h-screen font-sans text-gray-800">
     <div id="root"></div>
     <script type="module" src="/index.tsx"></script>
+
+    <!-- Service Worker 注册 -->
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          // 使用相对路径，兼容不同的 base 配置
+          const swPath = new URL('./service-worker.js', window.location.href).pathname;
+          navigator.serviceWorker
+            .register(swPath)
+            .then((registration) => {
+              console.log('✅ Service Worker 注册成功:', registration.scope);
+
+              // 检查更新
+              registration.addEventListener('updatefound', () => {
+                const newWorker = registration.installing;
+                console.log('🔄 发现新版本 Service Worker');
+
+                newWorker.addEventListener('statechange', () => {
+                  if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                    // 新版本已安装，提示用户刷新
+                    console.log('✨ 新版本已准备好，刷新页面即可更新');
+                    // 可选：显示一个提示让用户刷新页面
+                    // if (confirm('发现新版本，是否立即更新？')) {
+                    //   newWorker.postMessage({ type: 'SKIP_WAITING' });
+                    //   window.location.reload();
+                    // }
+                  }
+                });
+              });
+            })
+            .catch((error) => {
+              console.error('❌ Service Worker 注册失败:', error);
+            });
+
+          // 监听 Service Worker 控制变化
+          let refreshing = false;
+          navigator.serviceWorker.addEventListener('controllerchange', () => {
+            if (refreshing) return;
+            refreshing = true;
+            console.log('🔄 Service Worker 已更新，重新加载页面');
+            window.location.reload();
+          });
+        });
+      } else {
+        console.warn('⚠️ 当前浏览器不支持 Service Worker');
+      }
+    </script>
   </body>
 </html>
 
