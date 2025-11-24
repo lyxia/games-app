@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>语法小侦探</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&family=Zcool+KuaiLe&display=swap" rel="stylesheet">
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              detective: {
+                bg: '#FFF9C4',       // Very light yellow (folder/paper feel but bright)
+                paper: '#FFFFFF',    // Clean white
+                brown: '#795548',    // Lighter brown for text
+                accent: '#FF9800',   // Bright Orange
+                highlight: '#4FC3F7',// Bright Blue
+                success: '#8BC34A',  // Light Green
+                error: '#EF5350'     // Soft Red
+              }
+            },
+            fontFamily: {
+              // Use a friendly font stack. 'Zcool KuaiLe' is a fun Chinese font if available, else system sans.
+              sans: ['"Nunito"', '"Microsoft YaHei"', '"Heiti SC"', 'sans-serif'],
+              fun: ['"Zcool KuaiLe"', '"Nunito"', 'cursive'],
+            },
+            animation: {
+              'bounce-slow': 'bounce 3s infinite',
+              'fade-in': 'fadeIn 0.5s ease-out forwards',
+              'pop': 'pop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275)'
+            },
+            keyframes: {
+              fadeIn: {
+                '0%': { opacity: '0', transform: 'translateY(10px)' },
+                '100%': { opacity: '1', transform: 'translateY(0)' },
+              },
+              pop: {
+                '0%': { transform: 'scale(0.8)' },
+                '100%': { transform: 'scale(1)' },
+              }
+            }
+          }
+        }
+      }
+    </script>
+    <style>
+      body {
+        background-color: #FFF9C4;
+        /* A subtle grid pattern instead of dark wood */
+        background-image: 
+          linear-gradient(#FFE082 1px, transparent 1px),
+          linear-gradient(90deg, #FFE082 1px, transparent 1px);
+        background-size: 40px 40px;
+      }
+    </style>
+  <script type="importmap">
+{
+  "imports": {
+    "react": "https://aistudiocdn.com/react@^19.2.0",
+    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/",
+    "react/": "https://aistudiocdn.com/react@^19.2.0/",
+    "lucide-react": "https://aistudiocdn.com/lucide-react@^0.554.0"
+  }
+}
+</script>
+<link rel="stylesheet" href="/index.css">
+</head>
+  <body>
+    <div id="root"></div>
+  <script type="module" src="/index.tsx"></script>
+</body>
+</html>

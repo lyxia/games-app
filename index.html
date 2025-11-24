@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>小学生专项练习游戏中心</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- 字体链接 -->
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&family=Zcool+KuaiLe&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Comic+Neue:wght@400;700&family=Ma+Shan+Zheng&display=swap" rel="stylesheet">
+    <style>
+      /* ============================================
+         CSS 样式配置 - 来自各个游戏的 HTML 文件
+         注意：添加新游戏时，请检查其 HTML 文件中的自定义样式
+         ============================================ */
+      
+      /* --- parallel-lines-1 游戏样式 --- */
+      /* 3D Flip Animation Utilities */
+      .perspective-1000 {
+        perspective: 1000px;
+      }
+      .transform-style-3d {
+        transform-style: preserve-3d;
+      }
+      .backface-hidden {
+        backface-visibility: hidden;
+      }
+      .rotate-y-180 {
+        transform: rotateY(180deg);
+      }
+      
+      /* Paper texture effect */
+      .paper-bg {
+        background-color: #fdfbf7;
+        background-image: radial-gradient(#e6e6e6 1px, transparent 1px);
+        background-size: 20px 20px;
+      }
+      
+      /* Animation Keyframes */
+      @keyframes bounce-in {
+        0% { transform: scale(0.8); opacity: 0; }
+        60% { transform: scale(1.1); opacity: 1; }
+        100% { transform: scale(1); }
+      }
+      .animate-bounce-in {
+        animation: bounce-in 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+      }
+      
+      /* Shake animation */
+      @keyframes shake-simple {
+        0%, 100% { transform: translateX(0); }
+        25% { transform: translateX(-5px); }
+        75% { transform: translateX(5px); }
+      }
+      .animate-shake {
+        animation: shake-simple 0.3s ease-in-out;
+      }
+      
+      .hand-font {
+        font-family: 'Zcool KuaiLe', 'Comic Neue', cursive;
+      }
+      
+      /* --- logic-&-writing-builder-4 游戏样式 --- */
+      .shake {
+        animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both;
+      }
+    </style>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              /* --- grammar-adventure-1 游戏颜色 --- */
+              candy: {
+                blue: '#E0F7FA',
+                green: '#E8F5E9',
+                yellow: '#FFF9C4',
+                pink: '#FCE4EC',
+                purple: '#F3E5F5',
+              },
+              /* --- plural-verbs-3 游戏颜色 --- */
+              detective: {
+                bg: '#FFF9C4',
+                paper: '#FFFFFF',
+                brown: '#795548',
+                accent: '#FF9800',
+                highlight: '#4FC3F7',
+                success: '#8BC34A',
+                error: '#EF5350'
+              }
+            },
+            fontFamily: {
+              /* --- plural-verbs-3 游戏字体 --- */
+              sans: ['"Nunito"', '"Microsoft YaHei"', '"Heiti SC"', 'sans-serif'],
+              fun: ['"Zcool KuaiLe"', '"Nunito"', 'cursive'],
+              /* --- word-magic-factory-2 和 logic-&-writing-builder-4 游戏字体 --- */
+              fredoka: ['Fredoka', 'sans-serif'],
+              /* --- parallel-lines-1 游戏字体 --- */
+              comic: ['"Comic Neue"', '"Microsoft YaHei"', 'sans-serif'],
+            },
+            animation: {
+              /* --- grammar-adventure-1 游戏动画 --- */
+              'shake': 'shake 0.5s cubic-bezier(.36,.07,.19,.97) both',
+              /* --- plural-verbs-3 游戏动画 --- */
+              'bounce-slow': 'bounce 3s infinite',
+              'fade-in': 'fadeIn 0.5s ease-out forwards',
+              'pop': 'pop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
+              /* --- word-magic-factory-2 游戏动画 --- */
+              'float': 'float 6s ease-in-out infinite',
+              'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+            },
+            keyframes: {
+              /* --- grammar-adventure-1 游戏关键帧 --- */
+              shake: {
+                '10%, 90%': { transform: 'translate3d(-1px, 0, 0)' },
+                '20%, 80%': { transform: 'translate3d(2px, 0, 0)' },
+                '30%, 50%, 70%': { transform: 'translate3d(-4px, 0, 0)' },
+                '40%, 60%': { transform: 'translate3d(4px, 0, 0)' }
+              },
+              /* --- plural-verbs-3 游戏关键帧 --- */
+              fadeIn: {
+                '0%': { opacity: '0', transform: 'translateY(10px)' },
+                '100%': { opacity: '1', transform: 'translateY(0)' },
+              },
+              pop: {
+                '0%': { transform: 'scale(0.8)' },
+                '100%': { transform: 'scale(1)' },
+              },
+              /* --- word-magic-factory-2 游戏关键帧 --- */
+              float: {
+                '0%, 100%': { transform: 'translateY(0)' },
+                '50%': { transform: 'translateY(-20px)' },
+              }
+            }
+          },
+        },
+      }
+    </script>
+  </head>
+  <body class="bg-gradient-to-b from-blue-100 to-purple-200 min-h-screen font-sans text-gray-800">
+    <div id="root"></div>
+    <script type="module" src="/index.tsx"></script>
+  </body>
+</html>
+
