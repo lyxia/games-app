@@ -6,6 +6,19 @@ interface GameCardProps {
   game: GameInfo;
 }
 
+// 学科分类中文标签映射
+const getCategoryLabel = (category: string): string => {
+  const labels: Record<string, string> = {
+    english: '英语',
+    math: '数学',
+    science: '科学',
+    chinese: '语文',
+    music: '音乐',
+    art: '美术'
+  };
+  return labels[category] || category;
+};
+
 const GameCard: React.FC<GameCardProps> = ({ game }) => {
   const navigate = useNavigate();
 
@@ -13,7 +26,12 @@ const GameCard: React.FC<GameCardProps> = ({ game }) => {
     navigate(`/game/${game.category}/${game.folderName}`);
   };
 
-  const categoryColors = {
+  const categoryColors: Record<string, {
+    bg: string;
+    border: string;
+    text: string;
+    badge: string;
+  }> = {
     english: {
       bg: 'bg-gradient-to-br from-blue-400 to-purple-500',
       border: 'border-blue-300',
@@ -25,10 +43,24 @@ const GameCard: React.FC<GameCardProps> = ({ game }) => {
       border: 'border-green-300',
       text: 'text-green-800',
       badge: 'bg-green-100 text-green-700'
+    },
+    science: {
+      bg: 'bg-gradient-to-br from-purple-400 to-pink-500',
+      border: 'border-purple-300',
+      text: 'text-purple-800',
+      badge: 'bg-purple-100 text-purple-700'
     }
   };
 
-  const colors = categoryColors[game.category];
+  // 使用默认样式作为后备
+  const defaultColors = {
+    bg: 'bg-gradient-to-br from-gray-400 to-gray-500',
+    border: 'border-gray-300',
+    text: 'text-gray-800',
+    badge: 'bg-gray-100 text-gray-700'
+  };
+
+  const colors = categoryColors[game.category] || defaultColors;
 
   return (
     <div
@@ -48,14 +80,14 @@ const GameCard: React.FC<GameCardProps> = ({ game }) => {
             {game.name}
           </h3>
           <span className={`${colors.badge} px-3 py-1 rounded-full text-xs font-semibold whitespace-nowrap ml-2`}>
-            {game.category === 'english' ? '英语' : '数学'}
+            {getCategoryLabel(game.category)}
           </span>
         </div>
         <p className="text-white/90 text-sm flex-grow line-clamp-3">
           {game.description}
         </p>
         <div className="mt-4 flex items-center text-white/80 text-sm font-medium">
-          <span>开始游戏 →</span>
+          <span>开始学习 →</span>
         </div>
       </div>
       <div className="absolute bottom-0 left-0 right-0 h-1 bg-white/30"></div>

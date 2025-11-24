@@ -1,6 +1,7 @@
 import React, { Suspense, lazy } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { getGameByPath } from '../utils/gameScanner';
+import HtmlGameWrapper from './HtmlGameWrapper';
 
 const GameRouter: React.FC = () => {
   const { category, gameName } = useParams<{ category: string; gameName: string }>();
@@ -15,7 +16,15 @@ const GameRouter: React.FC = () => {
     return <div>游戏未找到</div>;
   }
 
-  // 动态导入游戏组件
+  // 如果是 HTML 类型游戏，使用 HtmlGameWrapper
+  if (game.type === 'html') {
+    if (!game.dataPath) {
+      return <div>游戏配置错误：缺少数据路径</div>;
+    }
+    return <HtmlGameWrapper dataPath={game.dataPath} gameName={game.name} />;
+  }
+
+  // 动态导入游戏组件（React 组件类型）
   const getGameComponent = () => {
     switch (game.path) {
       case 'english/grammar-adventure-1':
