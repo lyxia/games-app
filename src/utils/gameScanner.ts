@@ -51,6 +51,14 @@ export const games: GameInfo[] = [
     type: 'component'
   },
   {
+    category: 'math',
+    name: '垂线与距离：几何探险工厂',
+    description: '通过实验探索、场景应用和知识检测，深入学习垂线和点到直线距离的概念。',
+    path: 'math/parallel-lines-2',
+    folderName: 'parallel-lines-2',
+    type: 'component'
+  },
+  {
     category: 'science',
     name: '第4课：我们是怎样听到声音的',
     description: '交互式耳朵解剖图、声音传播模拟、听觉结构与作用配对游戏',

@@ -36,7 +36,7 @@ const GameRouter: React.FC = () => {
       case 'english/logic-&-writing-builder-4':
         return lazy(() => import('@/english/logic-&-writing-builder-4/App'));
       case 'math/parallel-lines-1':
-        return lazy(() => 
+        return lazy(() =>
           import('@/math/parallel-lines-1/index')
             .then(m => ({ default: m.App }))
             .catch(err => {
@@ -44,6 +44,8 @@ const GameRouter: React.FC = () => {
               throw err;
             })
         );
+      case 'math/parallel-lines-2':
+        return lazy(() => import('@/math/parallel-lines-2/App'));
       default:
         return null;
     }
