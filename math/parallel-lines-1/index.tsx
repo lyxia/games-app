@@ -919,10 +919,9 @@ const App = () => {
 // 导出 App 组件供路由使用
 export { App };
 
-// 注意：此文件现在作为模块被路由系统导入使用
-// 如果需要独立运行此游戏，请使用该游戏目录下的独立项目配置
-// 以下代码已注释，避免与路由系统冲突
-/*
+// 独立运行时挂载到 DOM
+import { createRoot } from 'react-dom/client';
+
 if (typeof window !== 'undefined' && document.getElementById('root')) {
   const rootElement = document.getElementById('root');
   if (rootElement && !rootElement.hasChildNodes()) {
@@ -930,4 +929,3 @@ if (typeof window !== 'undefined' && document.getElementById('root')) {
     root.render(<App />);
   }
 }
-*/

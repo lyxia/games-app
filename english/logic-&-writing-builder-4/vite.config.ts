@@ -5,9 +5,14 @@ import react from '@vitejs/plugin-react';
 export default defineConfig(({ mode }) => {
     const env = loadEnv(mode, '.', '');
     return {
+      base: mode === 'production' ? '/games-app/games/english/logic-&-writing-builder-4/' : '/',
       server: {
-        port: 3000,
+        port: 3004,
         host: '0.0.0.0',
+      },
+      build: {
+        outDir: '../../dist/games/english/logic-&-writing-builder-4',
+        emptyOutDir: true,
       },
       plugins: [react()],
       define: {

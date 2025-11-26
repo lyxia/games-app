@@ -1,6 +1,6 @@
 // Service Worker for 小学生专项练习游戏中心
 // 版本号 - 更新此版本号将触发新的缓存
-const CACHE_VERSION = 'v1.0.0';
+const CACHE_VERSION = 'v1.1.0';
 const CACHE_NAME = `games-app-${CACHE_VERSION}`;
 
 // 需要缓存的静态资源

@@ -5,9 +5,14 @@ import react from '@vitejs/plugin-react';
 export default defineConfig(({ mode }) => {
     const env = loadEnv(mode, '.', '');
     return {
+      base: mode === 'production' ? '/games-app/games/math/parallel-lines-1/' : '/',
       server: {
-        port: 3000,
+        port: 3005,
         host: '0.0.0.0',
+      },
+      build: {
+        outDir: '../../dist/games/math/parallel-lines-1',
+        emptyOutDir: true,
       },
       plugins: [react()],
       define: {

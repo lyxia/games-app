@@ -1,105 +1,82 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft } from 'lucide-react';
 import { LivePreview } from './LivePreview';
 import { Creation } from './CreationHistory';
 
-interface HtmlGameWrapperProps {
+interface Props {
   dataPath: string;
   gameName: string;
 }
 
-export default function HtmlGameWrapper({ dataPath, gameName }: HtmlGameWrapperProps) {
+const HtmlGameWrapper: React.FC<Props> = ({ dataPath, gameName }) => {
   const navigate = useNavigate();
   const [creation, setCreation] = useState<Creation | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    async function loadGameData() {
+    const loadGameData = async () => {
       try {
         setIsLoading(true);
-        setError(null);
-
-        // 处理路径：如果是绝对路径（以 / 开头），需要加上 base 路径
-        const basePath = import.meta.env.BASE_URL || '/';
+        // 拼接 base URL，处理开发/生产环境路径差异
+        const baseUrl = import.meta.env.BASE_URL;
         const fullPath = dataPath.startsWith('/')
-          ? `${basePath.replace(/\/$/, '')}${dataPath}`
-          : dataPath;
-
+          ? `${baseUrl}${dataPath.slice(1)}`
+          : `${baseUrl}${dataPath}`;
         const response = await fetch(fullPath);
         if (!response.ok) {
-          throw new Error(`加载失败: ${response.status} ${response.statusText}`);
+          throw new Error(`加载失败: ${response.status}`);
         }
-
         const data = await response.json();
-
-        // 确保时间戳是 Date 对象
-        if (data.timestamp) {
-          data.timestamp = new Date(data.timestamp);
-        }
-
         setCreation(data);
+        setError(null);
       } catch (err) {
         console.error('加载游戏数据失败:', err);
-        setError(err instanceof Error ? err.message : '加载游戏数据失败');
+        setError(err instanceof Error ? err.message : '加载失败');
       } finally {
         setIsLoading(false);
       }
-    }
+    };
 
     loadGameData();
   }, [dataPath]);
 
   const handleReset = () => {
-    // 重新加载游戏数据
-    window.location.reload();
-  };
-
-  const handleBack = () => {
     navigate('/');
   };
 
-  // 错误状态
   if (error) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900 text-white flex items-center justify-center p-4">
-        <div className="max-w-md w-full bg-red-900/20 border border-red-500/50 rounded-lg p-6 text-center">
-          <h2 className="text-2xl font-bold mb-4">加载失败</h2>
-          <p className="text-red-300 mb-6">{error}</p>
-          <div className="flex gap-4 justify-center">
-            <button
-              onClick={handleBack}
-              className="px-6 py-2 bg-gray-700 hover:bg-gray-600 rounded-lg transition-colors flex items-center gap-2"
-            >
-              <ArrowLeft size={20} />
-              返回首页
-            </button>
-            <button
-              onClick={() => window.location.reload()}
-              className="px-6 py-2 bg-purple-600 hover:bg-purple-500 rounded-lg transition-colors"
-            >
-              重试
-            </button>
-          </div>
+      <div className="min-h-screen flex items-center justify-center bg-gray-100">
+        <div className="text-center bg-white p-8 rounded-lg shadow-lg">
+          <p className="text-red-500 text-xl mb-4">加载游戏失败</p>
+          <p className="text-gray-600 mb-4">{error}</p>
+          <button
+            onClick={handleReset}
+            className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
+          >
+            返回首页
+          </button>
         </div>
       </div>
     );
   }
 
-  // 加载状态或正常渲染 LivePreview
   return (
-    <div className="relative">
-      {/* 返回按钮 */}
-      <button
-        onClick={handleBack}
-        className="fixed top-4 left-4 z-50 px-4 py-2 bg-gray-800/80 hover:bg-gray-700/80 text-white rounded-lg transition-colors flex items-center gap-2 backdrop-blur-sm"
-      >
-        <ArrowLeft size={20} />
-        返回首页
-      </button>
+    <div className="relative w-full h-screen">
+      {/* 返回按钮覆盖层 */}
+      <div className="absolute top-4 left-4 z-50">
+        <button
+          onClick={handleReset}
+          className="flex items-center gap-2 px-4 py-2 bg-black/70 hover:bg-black/90 text-white rounded-lg backdrop-blur-sm transition-all shadow-lg"
+        >
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+          </svg>
+          返回首页
+        </button>
+      </div>
 
-      {/* LivePreview 组件 */}
       <LivePreview
         creation={creation}
         isLoading={isLoading}
@@ -108,4 +85,6 @@ export default function HtmlGameWrapper({ dataPath, gameName }: HtmlGameWrapperP
       />
     </div>
   );
-}
+};
+
+export default HtmlGameWrapper;

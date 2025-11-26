@@ -31,11 +31,17 @@ jobs:
           node-version: '20'
           cache: 'npm'
 
-      - name: Install dependencies
+      - name: Install main dependencies
         run: npm ci
 
-      - name: Build
-        run: npm run build
+      - name: Build main app
+        run: npm run build:main
+
+      - name: Build games
+        run: npm run build:games
+
+      - name: Copy static games
+        run: npm run copy:static
 
       - name: Setup Pages
         uses: actions/configure-pages@v4
@@ -48,4 +54,3 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
-
