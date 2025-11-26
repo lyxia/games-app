@@ -26,10 +26,29 @@
 
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- 字体链接 -->
-    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&family=Zcool+KuaiLe&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Zcool+KuaiLe&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Comic+Neue:wght@400;700&family=Ma+Shan+Zheng&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
+      /* --- 全局基础样式（来自组件入口） --- */
+      body {
+        font-family: 'Nunito', 'Noto Sans SC', 'Microsoft YaHei', 'Heiti SC', sans-serif;
+      }
+      ::-webkit-scrollbar {
+        width: 8px;
+      }
+      ::-webkit-scrollbar-track {
+        background: #f1f1f1;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #ccc;
+        border-radius: 4px;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: #aaa;
+      }
+      
       /* ============================================
          CSS 样式配置 - 来自各个游戏的 HTML 文件
          注意：添加新游戏时，请检查其 HTML 文件中的自定义样式

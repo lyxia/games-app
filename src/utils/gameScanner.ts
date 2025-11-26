@@ -4,9 +4,9 @@ export interface GameInfo {
   description: string;
   path: string;
   folderName: string;
-  type: 'iframe' | 'html'; // iframe=需要构建的游戏, html=通过JSON加载HTML内容
+  type: 'iframe' | 'science' | 'english'; // iframe=需要构建的游戏, science=科学 JSON, english=英语 LessonPlan JSON
   devPort?: number; // 开发服务器端口（仅 iframe 类型）
-  dataPath?: string; // HTML 类型游戏的数据路径（JSON 文件）
+  dataPath?: string; // 科学/英语类型游戏的数据路径（JSON 文件）
 }
 
 // 游戏列表（手动维护，因为需要读取文件系统在浏览器中不可用）
@@ -48,6 +48,15 @@ export const games: GameInfo[] = [
     devPort: 3004
   },
   {
+    category: 'english',
+    name: '英语课程：Lesson 6',
+    description: '阅读短语、句子重组与造句综合练习，结合自然拼读与写作反馈。',
+    path: 'english/lesson-6',
+    folderName: 'lesson-6',
+    type: 'english',
+    dataPath: '/english/lesson_6.json'
+  },
+  {
     category: 'math',
     name: '平行与垂直特训营',
     description: '小学数学专项训练游戏，通过概念记忆卡、陷阱大扫除、图形辨析和奥数计算等模块，全面掌握平行与垂直的知识点。',
@@ -71,7 +80,7 @@ export const games: GameInfo[] = [
     description: '交互式耳朵解剖图、声音传播模拟、听觉结构与作用配对游戏',
     path: 'science/ear',
     folderName: 'ear',
-    type: 'html',
+    type: 'science',
     dataPath: '/science/ear/ear.json'
   }
 ];

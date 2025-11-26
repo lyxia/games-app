@@ -38,7 +38,7 @@
 | 平行与垂直特训营 | `parallel-lines-1` | 3005 | 概念记忆、图形辨析 |
 | 垂线与距离：几何探险工厂 | `parallel-lines-2` | 3006 | 垂线和点到直线距离 |
 
-### 科学游戏 (HTML 类型)
+### 科学游戏 (Science 类型)
 
 | 游戏 | 数据文件 | 说明 |
 |------|----------|------|
@@ -65,7 +65,7 @@ games-app/
 │   │   ├── GameCard.tsx          # 游戏卡片
 │   │   ├── GameRouter.tsx        # 游戏路由分发
 │   │   ├── IframeGameWrapper.tsx # iframe 游戏包装器
-│   │   ├── HtmlGameWrapper.tsx   # HTML 游戏包装器
+│   │   ├── ScienceGameWrapper.tsx # 科学游戏包装器
 │   │   └── LivePreview.tsx       # JSON 内容渲染器
 │   └── utils/
 │       └── gameScanner.ts        # 游戏配置
@@ -166,15 +166,15 @@ npm run preview
 3. 在 `src/utils/gameScanner.ts` 添加游戏配置
 4. 在 `scripts/dev-game.cjs` 添加端口映射
 
-### HTML 类型游戏（JSON 加载）
+### Science 类型游戏（JSON 加载）
 
 1. 将游戏数据 JSON 放入 `public/` 目录
 2. 在 `src/utils/gameScanner.ts` 添加配置：
    ```ts
-   {
-     type: 'html',
-     dataPath: '/science/xxx/xxx.json'
-   }
+  {
+    type: 'science',
+    dataPath: '/science/xxx/xxx.json'
+  }
    ```
 
 ## 📝 开发规范

@@ -8,7 +8,7 @@ interface Props {
   gameName: string;
 }
 
-const HtmlGameWrapper: React.FC<Props> = ({ dataPath, gameName }) => {
+const ScienceGameWrapper: React.FC<Props> = ({ dataPath, gameName }) => {
   const navigate = useNavigate();
   const [creation, setCreation] = useState<Creation | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -87,4 +87,4 @@ const HtmlGameWrapper: React.FC<Props> = ({ dataPath, gameName }) => {
   );
 };
 
-export default HtmlGameWrapper;
+export default ScienceGameWrapper;
