@@ -117,9 +117,9 @@ const GameScreen: React.FC<GameScreenProps> = ({ lesson, onExit }) => {
     // 使用浏览器自带的语音合成
     const utterance = new SpeechSynthesisUtterance(text);
     utterance.lang = 'en-US';
-    utterance.rate = 0.5;
-    utterance.pitch = 1.1; // 稍微提高音调，让声音更接近女声
-    utterance.volume = 1;
+    utterance.rate = 0.3; // 更慢的语速，适合小学1年级学生听清楚
+    utterance.pitch = 1.0; // 正常音调，保持清晰度
+    utterance.volume = 1; // 最大音量
 
     // 尝试选择女声
     const femaleVoice = getFemaleVoice();
