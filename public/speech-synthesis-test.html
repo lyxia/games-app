@@ -1,0 +1,825 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Speech Synthesis 语音合成测试</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 800px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 30px;
+            text-align: center;
+            font-size: 28px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            font-family: inherit;
+            resize: vertical;
+            min-height: 100px;
+            transition: border-color 0.3s;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        select, input[type="range"], input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            font-family: inherit;
+        }
+
+        select:focus, input[type="text"]:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .searchable-select {
+            position: relative;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 10px 40px 10px 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            font-family: inherit;
+            background: white;
+            cursor: pointer;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .search-icon {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #999;
+            pointer-events: none;
+        }
+
+        .dropdown-list {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-top: none;
+            border-radius: 0 0 8px 8px;
+            max-height: 200px;
+            overflow-y: auto;
+            z-index: 1000;
+            display: none;
+            margin-top: -2px;
+        }
+
+        .dropdown-list.show {
+            display: block;
+        }
+
+        .dropdown-item {
+            padding: 10px 12px;
+            cursor: pointer;
+            transition: background 0.2s;
+            font-size: 14px;
+        }
+
+        .dropdown-item:hover {
+            background: #e3f2fd;
+        }
+
+        .dropdown-item.selected {
+            background: #667eea;
+            color: white;
+        }
+
+        .dropdown-item.hidden {
+            display: none;
+        }
+
+        .no-results {
+            padding: 10px 12px;
+            color: #999;
+            font-size: 13px;
+            text-align: center;
+        }
+
+        .range-group {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .range-group input[type="range"] {
+            flex: 1;
+        }
+
+        .range-value {
+            min-width: 50px;
+            text-align: center;
+            font-weight: 600;
+            color: #667eea;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 30px;
+        }
+
+        button {
+            flex: 1;
+            padding: 14px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-play {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-play:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-pause {
+            background: #ffa726;
+            color: white;
+        }
+
+        .btn-pause:hover {
+            background: #ff9800;
+            transform: translateY(-2px);
+        }
+
+        .btn-stop {
+            background: #ef5350;
+            color: white;
+        }
+
+        .btn-stop:hover {
+            background: #e53935;
+            transform: translateY(-2px);
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        .status {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f5f5f5;
+            border-radius: 8px;
+            font-size: 14px;
+            color: #666;
+        }
+
+        .status.active {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        .voices-list {
+            margin-top: 20px;
+            max-height: 200px;
+            overflow-y: auto;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 10px;
+        }
+
+        .voice-item {
+            padding: 8px;
+            margin: 5px 0;
+            background: #f9f9f9;
+            border-radius: 4px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .voice-item:hover {
+            background: #e3f2fd;
+        }
+
+        .voice-item.selected {
+            background: #667eea;
+            color: white;
+        }
+
+        .info {
+            margin-top: 15px;
+            padding: 12px;
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            border-radius: 4px;
+            font-size: 13px;
+            color: #856404;
+        }
+
+        .code-section {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border: 2px solid #e0e0e0;
+        }
+
+        .code-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .code-header h3 {
+            margin: 0;
+            color: #333;
+            font-size: 16px;
+        }
+
+        .btn-copy {
+            padding: 8px 16px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-copy:hover {
+            background: #5568d3;
+            transform: translateY(-1px);
+        }
+
+        .btn-copy:active {
+            transform: translateY(0);
+        }
+
+        .btn-copy.copied {
+            background: #4caf50;
+        }
+
+        .code-block {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 15px;
+            border-radius: 6px;
+            font-family: 'Courier New', Consolas, monospace;
+            font-size: 13px;
+            line-height: 1.6;
+            overflow-x: auto;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .code-block::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        .code-block::-webkit-scrollbar-track {
+            background: #1e1e1e;
+            border-radius: 4px;
+        }
+
+        .code-block::-webkit-scrollbar-thumb {
+            background: #555;
+            border-radius: 4px;
+        }
+
+        .code-block::-webkit-scrollbar-thumb:hover {
+            background: #777;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+            }
+
+            .button-group {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎤 Speech Synthesis 语音合成测试</h1>
+
+        <div class="form-group">
+            <label for="textInput">要朗读的文本：</label>
+            <textarea id="textInput" placeholder="在这里输入要朗读的文本...">你好，这是一个语音合成测试页面。你可以输入任何文本，然后点击播放按钮来测试语音合成功能。</textarea>
+        </div>
+
+        <div class="form-group">
+            <label for="voiceSelect">选择语音：</label>
+            <div class="searchable-select">
+                <input type="text" id="voiceSearch" class="search-input" placeholder="搜索语音..." readonly>
+                <span class="search-icon">🔍</span>
+                <div id="voiceDropdown" class="dropdown-list"></div>
+            </div>
+            <select id="voiceSelect" style="display: none;">
+                <option value="">加载中...</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>
+                <div class="range-group">
+                    <span>语速:</span>
+                    <input type="range" id="rate" min="0.5" max="2" step="0.1" value="1">
+                    <span class="range-value" id="rateValue">1.0</span>
+                </div>
+            </label>
+        </div>
+
+        <div class="form-group">
+            <label>
+                <div class="range-group">
+                    <span>音调:</span>
+                    <input type="range" id="pitch" min="0" max="2" step="0.1" value="1">
+                    <span class="range-value" id="pitchValue">1.0</span>
+                </div>
+            </label>
+        </div>
+
+        <div class="form-group">
+            <label>
+                <div class="range-group">
+                    <span>音量:</span>
+                    <input type="range" id="volume" min="0" max="1" step="0.1" value="1">
+                    <span class="range-value" id="volumeValue">1.0</span>
+                </div>
+            </label>
+        </div>
+
+        <div class="button-group">
+            <button id="playBtn" class="btn-play">▶ 播放</button>
+            <button id="pauseBtn" class="btn-pause">⏸ 暂停</button>
+            <button id="stopBtn" class="btn-stop">⏹ 停止</button>
+        </div>
+
+        <div id="status" class="status">就绪</div>
+
+        <div class="info">
+            <strong>提示：</strong>如果语音列表为空，请刷新页面重试。某些浏览器可能需要用户交互后才能使用语音合成功能。
+        </div>
+
+        <div class="form-group" style="margin-top: 20px;">
+            <label>可用语音列表（点击选择）：</label>
+            <div id="voicesList" class="voices-list">加载中...</div>
+        </div>
+
+        <div class="code-section">
+            <div class="code-header">
+                <h3>📋 生成的代码</h3>
+                <button id="copyBtn" class="btn-copy">
+                    <span>📋</span>
+                    <span>复制代码</span>
+                </button>
+            </div>
+            <pre id="codeBlock" class="code-block">// 代码将在这里显示...</pre>
+        </div>
+    </div>
+
+    <script>
+        const synth = window.speechSynthesis;
+        let currentUtterance = null;
+        let voices = [];
+
+        // DOM 元素
+        const textInput = document.getElementById('textInput');
+        const voiceSelect = document.getElementById('voiceSelect');
+        const voiceSearch = document.getElementById('voiceSearch');
+        const voiceDropdown = document.getElementById('voiceDropdown');
+        const rateSlider = document.getElementById('rate');
+        const pitchSlider = document.getElementById('pitch');
+        const volumeSlider = document.getElementById('volume');
+        const rateValue = document.getElementById('rateValue');
+        const pitchValue = document.getElementById('pitchValue');
+        const volumeValue = document.getElementById('volumeValue');
+        const playBtn = document.getElementById('playBtn');
+        const pauseBtn = document.getElementById('pauseBtn');
+        const stopBtn = document.getElementById('stopBtn');
+        const status = document.getElementById('status');
+        const voicesList = document.getElementById('voicesList');
+        const codeBlock = document.getElementById('codeBlock');
+        const copyBtn = document.getElementById('copyBtn');
+
+        let selectedVoiceIndex = -1;
+
+        // 更新下拉列表显示
+        function updateDropdown(searchTerm = '') {
+            voiceDropdown.innerHTML = '';
+            const searchLower = searchTerm.toLowerCase();
+            let hasResults = false;
+
+            voices.forEach((voice, index) => {
+                const voiceText = `${voice.name} (${voice.lang})`;
+                const voiceTextLower = voiceText.toLowerCase();
+                
+                // 搜索过滤
+                if (searchTerm && !voiceTextLower.includes(searchLower) && 
+                    !voice.name.toLowerCase().includes(searchLower) && 
+                    !voice.lang.toLowerCase().includes(searchLower)) {
+                    return;
+                }
+
+                hasResults = true;
+                const item = document.createElement('div');
+                item.className = `dropdown-item ${index === selectedVoiceIndex ? 'selected' : ''}`;
+                item.textContent = voiceText;
+                item.dataset.index = index;
+                
+                item.onclick = () => {
+                    selectVoice(index);
+                    voiceDropdown.classList.remove('show');
+                };
+                
+                voiceDropdown.appendChild(item);
+            });
+
+            if (!hasResults && searchTerm) {
+                const noResults = document.createElement('div');
+                noResults.className = 'no-results';
+                noResults.textContent = '未找到匹配的语音';
+                voiceDropdown.appendChild(noResults);
+            }
+        }
+
+        // 生成代码
+        function generateCode() {
+            const text = textInput.value.trim();
+            const rate = parseFloat(rateSlider.value);
+            const pitch = parseFloat(pitchSlider.value);
+            const volume = parseFloat(volumeSlider.value);
+            
+            let voiceCode = '';
+            if (selectedVoiceIndex >= 0 && selectedVoiceIndex < voices.length) {
+                const voice = voices[selectedVoiceIndex];
+                voiceCode = `\n  utterance.voice = synth.getVoices().find(v => v.name === "${voice.name}" && v.lang === "${voice.lang}");`;
+            }
+
+            const code = `// Speech Synthesis 语音合成代码
+const synth = window.speechSynthesis;
+const utterance = new SpeechSynthesisUtterance(${JSON.stringify(text)});${voiceCode}
+
+// 设置参数
+utterance.rate = ${rate};      // 语速 (0.5 - 2.0)
+utterance.pitch = ${pitch};    // 音调 (0 - 2.0)
+utterance.volume = ${volume};  // 音量 (0 - 1.0)
+
+// 事件监听
+utterance.onstart = () => {
+  console.log('开始播放');
+};
+
+utterance.onend = () => {
+  console.log('播放完成');
+};
+
+utterance.onerror = (event) => {
+  console.error('播放错误:', event.error);
+};
+
+// 开始播放
+synth.speak(utterance);
+
+// 暂停: synth.pause();
+// 继续: synth.resume();
+// 停止: synth.cancel();`;
+
+            codeBlock.textContent = code;
+        }
+
+        // 复制代码到剪贴板
+        async function copyCode() {
+            try {
+                await navigator.clipboard.writeText(codeBlock.textContent);
+                copyBtn.innerHTML = '<span>✓</span><span>已复制</span>';
+                copyBtn.classList.add('copied');
+                
+                setTimeout(() => {
+                    copyBtn.innerHTML = '<span>📋</span><span>复制代码</span>';
+                    copyBtn.classList.remove('copied');
+                }, 2000);
+            } catch (err) {
+                // 降级方案：使用传统方法
+                const textArea = document.createElement('textarea');
+                textArea.value = codeBlock.textContent;
+                textArea.style.position = 'fixed';
+                textArea.style.opacity = '0';
+                document.body.appendChild(textArea);
+                textArea.select();
+                try {
+                    document.execCommand('copy');
+                    copyBtn.innerHTML = '<span>✓</span><span>已复制</span>';
+                    copyBtn.classList.add('copied');
+                    setTimeout(() => {
+                        copyBtn.innerHTML = '<span>📋</span><span>复制代码</span>';
+                        copyBtn.classList.remove('copied');
+                    }, 2000);
+                } catch (e) {
+                    alert('复制失败，请手动复制代码');
+                }
+                document.body.removeChild(textArea);
+            }
+        }
+
+        // 选择语音
+        function selectVoice(index) {
+            selectedVoiceIndex = index;
+            if (index >= 0 && index < voices.length) {
+                const voice = voices[index];
+                voiceSearch.value = `${voice.name} (${voice.lang})`;
+                voiceSelect.value = index;
+                
+                // 更新下拉列表中的选中状态
+                voiceDropdown.querySelectorAll('.dropdown-item').forEach(item => {
+                    item.classList.remove('selected');
+                    if (parseInt(item.dataset.index) === index) {
+                        item.classList.add('selected');
+                    }
+                });
+
+                // 更新语音列表中的选中状态
+                document.querySelectorAll('.voice-item').forEach((item, idx) => {
+                    item.classList.remove('selected');
+                    if (idx === index) {
+                        item.classList.add('selected');
+                    }
+                });
+            }
+            generateCode();
+        }
+
+        // 加载语音列表
+        function loadVoices() {
+            voices = synth.getVoices();
+            
+            // 清空选择框
+            voiceSelect.innerHTML = '';
+            voicesList.innerHTML = '';
+
+            if (voices.length === 0) {
+                voiceSelect.innerHTML = '<option value="">暂无可用语音</option>';
+                voiceSearch.value = '暂无可用语音';
+                voiceSearch.disabled = true;
+                voicesList.innerHTML = '<div style="padding: 10px; color: #999;">暂无可用语音</div>';
+                return;
+            }
+
+            voiceSearch.disabled = false;
+
+            // 填充隐藏的下拉框（用于兼容）
+            voices.forEach((voice, index) => {
+                const option = document.createElement('option');
+                option.value = index;
+                option.textContent = `${voice.name} (${voice.lang})`;
+                voiceSelect.appendChild(option);
+            });
+
+            // 填充语音列表
+            voices.forEach((voice, index) => {
+                const voiceItem = document.createElement('div');
+                voiceItem.className = 'voice-item';
+                voiceItem.textContent = `${voice.name} - ${voice.lang}${voice.default ? ' (默认)' : ''}`;
+                voiceItem.onclick = () => {
+                    selectVoice(index);
+                };
+                voicesList.appendChild(voiceItem);
+            });
+
+            // 初始化下拉列表
+            updateDropdown();
+
+            // 尝试选择中文语音
+            const chineseVoice = voices.findIndex(v => v.lang.startsWith('zh'));
+            if (chineseVoice !== -1) {
+                selectVoice(chineseVoice);
+            } else if (voices.length > 0) {
+                selectVoice(0);
+            }
+            
+            generateCode();
+        }
+
+        // 搜索输入框事件
+        voiceSearch.addEventListener('focus', () => {
+            voiceSearch.readOnly = false;
+            voiceSearch.placeholder = '输入关键词搜索语音...';
+            voiceDropdown.classList.add('show');
+            updateDropdown(voiceSearch.value);
+        });
+
+        voiceSearch.addEventListener('input', (e) => {
+            updateDropdown(e.target.value);
+        });
+
+        voiceSearch.addEventListener('click', () => {
+            voiceDropdown.classList.toggle('show');
+            if (voiceDropdown.classList.contains('show')) {
+                voiceSearch.readOnly = false;
+                voiceSearch.focus();
+            }
+        });
+
+        // 点击外部关闭下拉列表
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.searchable-select')) {
+                voiceDropdown.classList.remove('show');
+                voiceSearch.readOnly = true;
+                voiceSearch.placeholder = '搜索语音...';
+            }
+        });
+
+        // 初始化时加载语音
+        if (synth.onvoiceschanged !== undefined) {
+            synth.onvoiceschanged = loadVoices;
+        }
+        loadVoices();
+
+        // 更新滑块显示值并生成代码
+        rateSlider.addEventListener('input', (e) => {
+            rateValue.textContent = e.target.value;
+            generateCode();
+        });
+
+        pitchSlider.addEventListener('input', (e) => {
+            pitchValue.textContent = e.target.value;
+            generateCode();
+        });
+
+        volumeSlider.addEventListener('input', (e) => {
+            volumeValue.textContent = e.target.value;
+            generateCode();
+        });
+
+        // 文本输入时更新代码
+        textInput.addEventListener('input', () => {
+            generateCode();
+        });
+
+        // 复制按钮事件
+        copyBtn.addEventListener('click', copyCode);
+
+        // 播放
+        playBtn.addEventListener('click', () => {
+            const text = textInput.value.trim();
+            if (!text) {
+                status.textContent = '请输入要朗读的文本';
+                status.className = 'status';
+                return;
+            }
+
+            // 停止当前播放
+            synth.cancel();
+
+            // 创建新的语音合成对象
+            currentUtterance = new SpeechSynthesisUtterance(text);
+            
+            // 设置语音
+            if (selectedVoiceIndex >= 0 && selectedVoiceIndex < voices.length) {
+                currentUtterance.voice = voices[selectedVoiceIndex];
+            }
+
+            // 设置参数
+            currentUtterance.rate = parseFloat(rateSlider.value);
+            currentUtterance.pitch = parseFloat(pitchSlider.value);
+            currentUtterance.volume = parseFloat(volumeSlider.value);
+
+            // 事件监听
+            currentUtterance.onstart = () => {
+                status.textContent = '正在播放...';
+                status.className = 'status active';
+                playBtn.disabled = true;
+                pauseBtn.disabled = false;
+                stopBtn.disabled = false;
+            };
+
+            currentUtterance.onend = () => {
+                status.textContent = '播放完成';
+                status.className = 'status';
+                playBtn.disabled = false;
+                pauseBtn.disabled = true;
+                stopBtn.disabled = false;
+                currentUtterance = null;
+            };
+
+            currentUtterance.onerror = (event) => {
+                status.textContent = `播放错误: ${event.error}`;
+                status.className = 'status';
+                playBtn.disabled = false;
+                pauseBtn.disabled = true;
+                stopBtn.disabled = false;
+                currentUtterance = null;
+            };
+
+            // 开始播放
+            synth.speak(currentUtterance);
+        });
+
+        // 暂停
+        pauseBtn.addEventListener('click', () => {
+            if (synth.speaking && !synth.paused) {
+                synth.pause();
+                status.textContent = '已暂停';
+                pauseBtn.textContent = '▶ 继续';
+            } else if (synth.paused) {
+                synth.resume();
+                status.textContent = '正在播放...';
+                pauseBtn.textContent = '⏸ 暂停';
+            }
+        });
+
+        // 停止
+        stopBtn.addEventListener('click', () => {
+            synth.cancel();
+            status.textContent = '已停止';
+            status.className = 'status';
+            playBtn.disabled = false;
+            pauseBtn.disabled = true;
+            pauseBtn.textContent = '⏸ 暂停';
+            stopBtn.disabled = true;
+            currentUtterance = null;
+        });
+
+        // 初始化按钮状态
+        pauseBtn.disabled = true;
+        stopBtn.disabled = true;
+    </script>
+</body>
+</html>
+

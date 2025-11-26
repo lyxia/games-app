@@ -19,6 +19,7 @@ export interface LessonItem {
   sentenceTranslation: string;
   scrambledSentence: string[]; // Array of words
   sentenceHint?: string; // Hint sentence for writing imitation stage
+  sentenceHintTranslation?: string; // Chinese translation of the hint sentence
 }
 
 export interface LessonPlan {
@@ -53,6 +54,7 @@ const GameScreen: React.FC<GameScreenProps> = ({ lesson, onExit }) => {
   const [feedbackMessage, setFeedbackMessage] = useState('');
   const [isCheckingAI, setIsCheckingAI] = useState(false);
   const [showHint, setShowHint] = useState(false);
+  const [isCardFlipped, setIsCardFlipped] = useState(false);
 
   const resetStepState = useCallback(() => {
     setSelectedOption(null);
@@ -61,6 +63,7 @@ const GameScreen: React.FC<GameScreenProps> = ({ lesson, onExit }) => {
     setFeedbackMessage('');
     setSentenceWords([]);
     setShowHint(false);
+    setIsCardFlipped(false);
   }, [stepInItem]);
 
   // Initialize step specific state
@@ -116,16 +119,12 @@ const GameScreen: React.FC<GameScreenProps> = ({ lesson, onExit }) => {
 
     // 使用浏览器自带的语音合成
     const utterance = new SpeechSynthesisUtterance(text);
-    utterance.lang = 'en-US';
-    utterance.rate = 0.3; // 更慢的语速，适合小学1年级学生听清楚
-    utterance.pitch = 1.0; // 正常音调，保持清晰度
-    utterance.volume = 1; // 最大音量
+    utterance.voice = window.speechSynthesis.getVoices().find(v => v.name === "Google US English" && v.lang === "en-US");
 
-    // 尝试选择女声
-    const femaleVoice = getFemaleVoice();
-    if (femaleVoice) {
-      utterance.voice = femaleVoice;
-    }
+    // 设置参数
+    utterance.rate = 0.7;      // 语速 (0.5 - 2.0)
+    utterance.pitch = 1;    // 音调 (0 - 2.0)
+    utterance.volume = 1;  // 音量 (0 - 1.0)
 
     window.speechSynthesis.speak(utterance);
   }, [getFemaleVoice]);
@@ -317,42 +316,79 @@ const GameScreen: React.FC<GameScreenProps> = ({ lesson, onExit }) => {
       <div className="flex flex-col items-center text-center mt-10 animate-fade-in">
         <h2 className="text-gray-500 font-bold mb-4 uppercase tracking-widest">自然拼读 & 新词</h2>
         
-        <div className="p-8 border-2 border-gray-200 rounded-3xl w-full max-w-sm mb-8 shadow-sm bg-white">
-          <div className="text-5xl font-extrabold mb-4 flex justify-center flex-wrap gap-1">
-            {currentItem.phonicsBreakdown && currentItem.phonicsBreakdown.length > 0 ? (
-              currentItem.phonicsBreakdown.map((p: PhonicsPart, i: number) => (
-                <button
-                  key={i}
-                  type="button"
-                  onClick={() => playAudio(p.part)}
-                  className={`${getPartColor(p.type)} px-1 border-b-4 border-dashed border-gray-300 hover:border-blue-400 transition-colors`}
-                >
-                  {p.part}
-                </button>
-              ))
-            ) : (
-              <span className="text-gray-800">{currentItem.word}</span>
-            )}
-          </div>
-          
-          <p className="text-gray-400 font-mono text-xl mb-6">/{currentItem.phonics}/</p>
-          
-          <button 
-            onClick={() => playAudio(currentItem.word)}
-            className="p-4 bg-blue-100 text-blue-500 rounded-2xl hover:bg-blue-200 transition-colors"
+        {/* 翻转卡片容器 */}
+        <div 
+          className="w-full max-w-sm mb-8 perspective-1000"
+          style={{ perspective: '1000px' }}
+        >
+          <div 
+            className="relative w-full h-96 cursor-pointer preserve-3d transition-transform duration-700"
+            style={{ 
+              transformStyle: 'preserve-3d',
+              transform: isCardFlipped ? 'rotateY(180deg)' : 'rotateY(0deg)'
+            }}
+            onClick={() => setIsCardFlipped(!isCardFlipped)}
           >
-            <Volume2 className="w-8 h-8" />
-          </button>
-        </div>
-        
-        <div className="max-w-sm bg-gray-50 p-6 rounded-2xl w-full border border-gray-100">
-          <h3 className="font-bold text-xl mb-2 text-gray-700">中文释义</h3>
-          <p className="text-gray-800 text-2xl font-bold mb-4">{currentItem.definition}</p>
-          
-          <div className="flex justify-center gap-4 text-sm mt-4">
-             <div className="flex items-center gap-1"><span className="w-3 h-3 rounded-full bg-red-500"></span> 元音</div>
-             <div className="flex items-center gap-1"><span className="w-3 h-3 rounded-full bg-gray-800"></span> 辅音</div>
-             <div className="flex items-center gap-1"><span className="w-3 h-3 rounded-full bg-gray-300"></span> 不发音</div>
+            {/* 正面：英文 */}
+            <div 
+              className="absolute inset-0 w-full h-full backface-hidden p-8 border-2 border-gray-200 rounded-3xl shadow-sm bg-white"
+              style={{ 
+                backfaceVisibility: 'hidden',
+                WebkitBackfaceVisibility: 'hidden'
+              }}
+            >
+              <div className="text-5xl font-extrabold mb-4 flex justify-center flex-wrap gap-1">
+                {currentItem.phonicsBreakdown && currentItem.phonicsBreakdown.length > 0 ? (
+                  currentItem.phonicsBreakdown.map((p: PhonicsPart, i: number) => (
+                    <button
+                      key={i}
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        playAudio(p.part);
+                      }}
+                      className={`${getPartColor(p.type)} px-1 border-b-4 border-dashed border-gray-300 hover:border-blue-400 transition-colors`}
+                    >
+                      {p.part}
+                    </button>
+                  ))
+                ) : (
+                  <span className="text-gray-800">{currentItem.word}</span>
+                )}
+              </div>
+              
+              <p className="text-gray-400 font-mono text-xl mb-6">/{currentItem.phonics}/</p>
+              
+              <button 
+                onClick={(e) => {
+                  e.stopPropagation();
+                  playAudio(currentItem.word);
+                }}
+                className="p-4 bg-blue-100 text-blue-500 rounded-2xl hover:bg-blue-200 transition-colors"
+              >
+                <Volume2 className="w-8 h-8" />
+              </button>
+              
+              <div className="flex justify-center gap-4 text-sm mt-6">
+                <div className="flex items-center gap-1"><span className="w-3 h-3 rounded-full bg-red-500"></span> 元音</div>
+                <div className="flex items-center gap-1"><span className="w-3 h-3 rounded-full bg-gray-800"></span> 辅音</div>
+                <div className="flex items-center gap-1"><span className="w-3 h-3 rounded-full bg-gray-300"></span> 不发音</div>
+              </div>
+            </div>
+
+            {/* 背面：中文 */}
+            <div 
+              className="absolute inset-0 w-full h-full backface-hidden p-8 border-2 border-gray-200 rounded-3xl shadow-sm bg-gray-50 flex flex-col items-center justify-center"
+              style={{ 
+                backfaceVisibility: 'hidden',
+                WebkitBackfaceVisibility: 'hidden',
+                transform: 'rotateY(180deg)'
+              }}
+            >
+              <h3 className="font-bold text-xl mb-4 text-gray-700">中文释义</h3>
+              <p className="text-gray-800 text-4xl font-bold mb-6">{currentItem.definition}</p>
+              <p className="text-gray-500 text-sm">点击卡片翻转</p>
+            </div>
           </div>
         </div>
       </div>
@@ -550,6 +586,9 @@ const GameScreen: React.FC<GameScreenProps> = ({ lesson, onExit }) => {
               </button>
             </div>
             <p className="text-blue-900 font-medium italic">"{currentItem.sentenceHint}"</p>
+            {currentItem.sentenceHintTranslation && (
+              <p className="text-blue-700 text-sm mt-1 ml-3">{currentItem.sentenceHintTranslation}</p>
+            )}
           </div>
         )}
       </div>

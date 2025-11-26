@@ -46,7 +46,8 @@
         "a",
         "her!"
       ],
-      "sentenceHint": "Give her a gift. Surprise her!"
+      "sentenceHint": "Give her a gift. Surprise her!",
+      "sentenceHintTranslation": "给她一份礼物。给她一个惊喜！"
     },
     {
       "id": "U6W02",
@@ -87,7 +88,8 @@
         "basketball",
         "together."
       ],
-      "sentenceHint": "My older brother and I often play soccer together."
+      "sentenceHint": "My older brother and I often play soccer together.",
+      "sentenceHintTranslation": "我哥哥和我经常一起踢足球。"
     },
     {
       "id": "U6W03",
@@ -134,7 +136,8 @@
         "things",
         "together."
       ],
-      "sentenceHint": "He helps me with homework and sometimes we read books together."
+      "sentenceHint": "He helps me with homework and sometimes we read books together.",
+      "sentenceHintTranslation": "他帮我做作业，有时我们一起读书。"
     },
     {
       "id": "U6W04",
@@ -181,7 +184,8 @@
         "after",
         "."
       ],
-      "sentenceHint": "I enjoy playing with my baby sister in the morning."
+      "sentenceHint": "I enjoy playing with my baby sister in the morning.",
+      "sentenceHintTranslation": "我喜欢早上和我的小妹妹一起玩。"
     },
     {
       "id": "U6W05",
@@ -220,7 +224,8 @@
         "his",
         "."
       ],
-      "sentenceHint": "I plan to give a present to him on his special day."
+      "sentenceHint": "I plan to give a present to him on his special day.",
+      "sentenceHintTranslation": "我计划在他特殊的日子送他一份礼物。"
     },
     {
       "id": "U6W06",
@@ -255,7 +260,8 @@
         "Sunday",
         "."
       ],
-      "sentenceHint": "My grandpa's birthday is this Saturday."
+      "sentenceHint": "My grandpa's birthday is this Saturday.",
+      "sentenceHintTranslation": "我爷爷的生日是这个星期六。"
     },
     {
       "id": "U6W07",
@@ -297,7 +303,8 @@
         "party",
         "."
       ],
-      "sentenceHint": "They decided to buy a chocolate cake for the celebration."
+      "sentenceHint": "They decided to buy a chocolate cake for the celebration.",
+      "sentenceHintTranslation": "他们决定为庆祝活动买一个巧克力蛋糕。"
     },
     {
       "id": "U6W08",
@@ -335,7 +342,8 @@
         "me",
         "."
       ],
-      "sentenceHint": "He enjoys reading and spending quiet time with me."
+      "sentenceHint": "He enjoys reading and spending quiet time with me.",
+      "sentenceHintTranslation": "他喜欢阅读，喜欢和我一起度过安静的时光。"
     },
     {
       "id": "U6W09",
@@ -375,7 +383,8 @@
         "color",
         "."
       ],
-      "sentenceHint": "It was so sweet of her to remember my favorite food."
+      "sentenceHint": "It was so sweet of her to remember my favorite food.",
+      "sentenceHintTranslation": "她能记住我最喜欢的食物真是太贴心了。"
     },
     {
       "id": "U6W10",
@@ -415,7 +424,8 @@
         "laugh",
         "."
       ],
-      "sentenceHint": "You can show her a funny video and make her smile."
+      "sentenceHint": "You can show her a funny video and make her smile.",
+      "sentenceHintTranslation": "你可以给她看一个有趣的视频，让她笑起来。"
     },
     {
       "id": "U6W11",
@@ -471,7 +481,8 @@
         "new",
         "."
       ],
-      "sentenceHint": "I can make her breakfast, write her a letter, go shopping with her, or help her with chores."
+      "sentenceHint": "I can make her breakfast, write her a letter, go shopping with her, or help her with chores.",
+      "sentenceHintTranslation": "我可以给她做早餐，给她写一封信，和她一起去购物，或者帮她做家务。"
     },
     {
       "id": "U6W12",
@@ -514,7 +525,8 @@
         "weekend",
         "."
       ],
-      "sentenceHint": "They like to help Grandma cook dinner every evening."
+      "sentenceHint": "They like to help Grandma cook dinner every evening.",
+      "sentenceHintTranslation": "他们喜欢每天晚上帮奶奶做晚饭。"
     },
     {
       "id": "U6W13",
@@ -552,7 +564,8 @@
         "Christmas",
         "."
       ],
-      "sentenceHint": "My Aunt is coming to visit us for New Year."
+      "sentenceHint": "My Aunt is coming to visit us for New Year.",
+      "sentenceHintTranslation": "我的阿姨要来看我们过新年。"
     },
     {
       "id": "U6W14",
@@ -589,7 +602,8 @@
         "Shanghai",
         "."
       ],
-      "sentenceHint": "We will visit Uncle Tom next week when we go to Beijing."
+      "sentenceHint": "We will visit Uncle Tom next week when we go to Beijing.",
+      "sentenceHintTranslation": "我们下周去北京时会去看望汤姆叔叔。"
     },
     {
       "id": "U6W15",
@@ -627,7 +641,8 @@
         "me",
         "."
       ],
-      "sentenceHint": "My brother studies with me every day."
+      "sentenceHint": "My brother studies with me every day.",
+      "sentenceHintTranslation": "我哥哥每天和我一起学习。"
     },
     {
       "id": "U6W16",
@@ -673,7 +688,8 @@
         "leave",
         "."
       ],
-      "sentenceHint": "I will leave a message on the table before I leave for work."
+      "sentenceHint": "I will leave a message on the table before I leave for work.",
+      "sentenceHintTranslation": "我上班前会在桌子上留个消息。"
     },
     {
       "id": "U6W17",
@@ -718,7 +734,8 @@
         "meeting",
         "?"
       ],
-      "sentenceHint": "Could you please write a note to remind me about the appointment?"
+      "sentenceHint": "Could you please write a note to remind me about the appointment?",
+      "sentenceHintTranslation": "你能写一张便条提醒我约会的事吗？"
     },
     {
       "id": "U6W18",
@@ -757,7 +774,8 @@
         "rides",
         "."
       ],
-      "sentenceHint": "We like to sing a song together during family time."
+      "sentenceHint": "We like to sing a song together during family time.",
+      "sentenceHintTranslation": "我们喜欢在家庭时间一起唱歌。"
     },
     {
       "id": "U6W19",
@@ -795,7 +813,8 @@
         "1980s",
         "."
       ],
-      "sentenceHint": "That is my father's favorite song from the 1990s."
+      "sentenceHint": "That is my father's favorite song from the 1990s.",
+      "sentenceHintTranslation": "那是我父亲最喜欢的20世纪90年代的歌曲。"
     },
     {
       "id": "U6W20",
@@ -838,7 +857,8 @@
         "day",
         "."
       ],
-      "sentenceHint": "He gave me a warm smile when I arrived home after school."
+      "sentenceHint": "He gave me a warm smile when I arrived home after school.",
+      "sentenceHintTranslation": "我放学回家时，他给了我一个温暖的微笑。"
     },
     {
       "id": "U6W21",
@@ -877,7 +897,8 @@
         "problem",
         "?"
       ],
-      "sentenceHint": "Who can I ask for help with this math question?"
+      "sentenceHint": "Who can I ask for help with this math question?",
+      "sentenceHintTranslation": "我可以问谁这道数学题？"
     },
     {
       "id": "U6W22",
@@ -921,7 +942,8 @@
         "invitation",
         "."
       ],
-      "sentenceHint": "We need to confirm the party date for the invitations."
+      "sentenceHint": "We need to confirm the party date for the invitations.",
+      "sentenceHintTranslation": "我们需要确认派对的日期以便制作请柬。"
     }
   ]
 }
