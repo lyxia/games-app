@@ -75,6 +75,15 @@ export const games: GameInfo[] = [
     devPort: 3006
   },
   {
+    category: 'math',
+    name: '平行四边形伙伴',
+    description: '专为四年级学生设计的互动式学习体验，通过9个游戏化模块掌握平行四边形。由友好的AI导师Poly教授带领，涵盖定义、性质、高和解题技巧。',
+    path: 'math/parallel-lines-3',
+    folderName: 'parallel-lines-3',
+    type: 'iframe',
+    devPort: 3007
+  },
+  {
     category: 'science',
     name: '第4课：我们是怎样听到声音的',
     description: '交互式耳朵解剖图、声音传播模拟、听觉结构与作用配对游戏',
