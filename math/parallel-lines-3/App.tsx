@@ -3,7 +3,6 @@ import { ChevronRight, MessageCircle, Volume2, Star, BookOpen, Menu } from 'luci
 import { FeatureInspector, PropertyExplorer, InstabilityDemo } from './components/Step1_Basics';
 import { HeightLauncher, HeightDrawing, UniqueHeight } from './components/Step2_Height';
 import { PerimeterCalculator, ShapeCounter, GardenPath } from './components/Step3_Advanced';
-import { askTeacher } from './services/geminiService';
 import { LearningModule } from './types';
 
 // Define the curriculum structure with Chinese Titles
@@ -58,9 +57,7 @@ const App: React.FC = () => {
 
     // Context for AI
     const context = `当前学习内容: ${STEP_NAMES[currentStep]} - ${currentModuleData.title} (${currentModuleData.description}). 学生正在进行四年级数学互动学习。`;
-    const answer = await askTeacher(context, question);
     
-    setChatHistory(prev => [...prev, { role: 'ai', text: answer }]);
     setIsLoading(false);
   };
 
