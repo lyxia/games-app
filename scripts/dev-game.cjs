@@ -14,6 +14,7 @@ const games = [
   { name: '平行与垂直特训营', path: 'math/parallel-lines-1', devPort: 3005 },
   { name: '垂线与距离：几何探险工厂', path: 'math/parallel-lines-2', devPort: 3006 },
   { name: '平行四边形伙伴：四年级数学大冒险', path: 'math/parallel-lines-3', devPort: 3007 },
+  { name: '条形图学习大冒险', path: 'math/bar-chart-learning-adventure', devPort: 3008 },
 ];
 
 // 过滤出有 package.json 的游戏（可构建的游戏）

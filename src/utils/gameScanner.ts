@@ -84,6 +84,15 @@ export const games: GameInfo[] = [
     devPort: 3007
   },
   {
+    category: 'math',
+    name: '条形图学习大冒险',
+    description: '通过四个互动关卡学习条形图：计数、刻度、比较与综合复习。专为四年级数学逻辑思维设计。',
+    path: 'math/bar-chart-learning-adventure',
+    folderName: 'bar-chart-learning-adventure',
+    type: 'iframe',
+    devPort: 3008
+  },
+  {
     category: 'science',
     name: '第4课：我们是怎样听到声音的',
     description: '交互式耳朵解剖图、声音传播模拟、听觉结构与作用配对游戏',
